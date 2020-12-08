@@ -35,7 +35,7 @@ stages:
           $body = @"
           {"ExperimentName": "REST_Unified_Pipeline_Trigger_Test"}
           "@
-
+          $headers
           # Now, call the AML endpoint, passing in the token we got above
           Invoke-RESTMethod -Uri $(pipeline_endpoint) -Method Post -Headers $headers -Body $body -ContentType "application/json"
   
