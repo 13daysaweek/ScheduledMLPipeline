@@ -30,7 +30,7 @@ stages:
           $tokenUrl = "https://login.microsoftonline.com/$(tenant_id)/oauth2/token"
           $body = "grant_type=client_credentials&client_id=$(client_id)&resource=https://management.core.windows.net&client_secret=$(client_secret)"
           $token_response = Invoke-RESTMethod -Uri $tokenUrl -Method POST -Body $body
-          $bearer_token = ConvertTo-SecureString $token_response.access_token
+          $bearer_token = ConvertTo-SecureString $token_response.access_token -AsPlainText -Force
 
           # Now, call the AML endpoint, passing in the token we got above
           Invoke-RESTMethod -Uri $(pipeline_endpoint) -Token $bearer_token -Authentication Bearer
