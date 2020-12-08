@@ -29,7 +29,7 @@ stages:
           
           $tokenUrl = "https://login.microsoftonline.com/$(tenant_id)/oauth2/token"
           $body = "grant_type=client_credentials&client_id=$(client_id)&resource=https://management.core.windows.net&client_secret=$(client_secret)"
-          $token_response = Invoke-RESTMethod  $url -Method POST -Body $body | Convert-FromJson | Select access_token
+          $token_response = Invoke-RESTMethod  $url -Method POST -Body $body
 
 # Make API request, selecting JSON properties from response
 #Invoke-WebRequest $url -Method Post -Credential $credential -Body $params -UseBasicParsing |
