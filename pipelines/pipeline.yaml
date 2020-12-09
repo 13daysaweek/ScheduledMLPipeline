@@ -19,24 +19,16 @@ stages:
   - job: StartPipeline
     displayName: 'Start Pipeline'
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'ubuntu-latest'
 
     steps:
-    - task: PowerShell@2
-      displayName: 'Get token and start pipeline'
+    - task: AzureCLI@2
+      displayName: 'az cli: submit pipeline run'
       inputs:
-        targetType: 'inline'
-        script: |
-          # Get token for use when calling AML endpoint
-          $tokenUrl = "https://login.microsoftonline.com/$(tenant_id)/oauth2/token"
-          $body = "grant_type=client_credentials&client_id=$(client_id)&resource=https://management.core.windows.net&client_secret=$(client_secret)"
-          $token_response = Invoke-RESTMethod -Uri $tokenUrl -Method POST -Body $body
-          $authHeader = "Bearer " + $token_response.access_token
-          $headers = @{'Authorization' = $authHeader}
-          $body = @"
-          {"ExperimentName": "REST_Unified_Pipeline_Trigger_Test"}
-          "@
-          $headers
-          # Now, call the AML endpoint, passing in the token we got above
-          Invoke-RESTMethod -Uri $(pipeline_endpoint) -Method Post -Headers $headers -Body $body -ContentType "application/json"
+        azureSubscription: 'NK-AIRS'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az extension add -n azure-cli-ml
+          az ml run submit-pipeline -i $(pipeline_id) -w $(workspace_name) -g $(resource_group_name)
   
