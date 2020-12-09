@@ -2,7 +2,7 @@ pr: none
 trigger: none
 schedules:
 - cron: "0 * * * *"
-  displayName: Daily midnight build
+  displayName: Hourly
   branches:
     include:
     - master
