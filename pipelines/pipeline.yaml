@@ -19,7 +19,7 @@ stages:
   - job: StartPipeline
     displayName: 'Start Pipeline'
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'ubuntu-latest'
 
     steps:
     - task: AzureCLI@2
