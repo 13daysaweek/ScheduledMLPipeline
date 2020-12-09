@@ -5,7 +5,7 @@ schedules:
   displayName: Hourly
   branches:
     include:
-    - master
+    - main
   always: true
 
 variables:
