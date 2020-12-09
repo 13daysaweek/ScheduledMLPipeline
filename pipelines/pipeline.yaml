@@ -1,1 +1,42 @@
-# Comment
+pr: none
+trigger: none
+schedules:
+- cron: "0 * * * *"
+  displayName: Hourly
+  branches:
+    include:
+    - main
+  always: true
+
+variables:
+- group: 'Scheduled ML Pipeline Variables'
+
+stages:
+- stage: StartPipeline
+  displayName: 'Start Pipeline'
+
+  jobs:
+  - job: StartPipeline
+    displayName: 'Start Pipeline'
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+    - task: PowerShell@2
+      displayName: 'Get token and start pipeline'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Get token for use when calling AML endpoint
+          $tokenUrl = "https://login.microsoftonline.com/$(tenant_id)/oauth2/token"
+          $body = "grant_type=client_credentials&client_id=$(client_id)&resource=https://management.core.windows.net&client_secret=$(client_secret)"
+          $token_response = Invoke-RESTMethod -Uri $tokenUrl -Method POST -Body $body
+          $authHeader = "Bearer " + $token_response.access_token
+          $headers = @{'Authorization' = $authHeader}
+          $body = @"
+          {"ExperimentName": "REST_Unified_Pipeline_Trigger_Test"}
+          "@
+          $headers
+          # Now, call the AML endpoint, passing in the token we got above
+          Invoke-RESTMethod -Uri $(pipeline_endpoint) -Method Post -Headers $headers -Body $body -ContentType "application/json"
+  
